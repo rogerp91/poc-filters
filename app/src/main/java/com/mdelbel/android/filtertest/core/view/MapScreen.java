@@ -28,7 +28,7 @@ public class MapScreen extends AppCompatActivity implements MapView {
     }
 
     @Override
-    public void showFilterBar(@NonNull FilterBar bar) {
+    public void refreshFilterBar(@NonNull FilterBar bar) {
         map.showFilterBar(bar);
     }
 }

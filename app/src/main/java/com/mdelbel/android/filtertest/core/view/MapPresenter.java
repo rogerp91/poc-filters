@@ -4,7 +4,7 @@ import android.support.annotation.NonNull;
 
 import com.mdelbel.android.filtertest.core.dto.AvailableFiltersDto;
 import com.mdelbel.android.filtertest.core.dto.FilterDto;
-import com.mdelbel.android.filtertest.ui.model.Filter;
+import com.mdelbel.android.filtertest.core.handler.FilterBarHandler;
 import com.mdelbel.android.filtertest.ui.model.FilterBar;
 
 import java.util.ArrayList;
@@ -12,20 +12,24 @@ import java.util.List;
 
 public class MapPresenter {
 
-    private AvailableFiltersDto filtersDto = createMockAvailableFiltersDto();
+    private final FilterBar filterBar = new FilterBar();
+
+    private MapView view;
+
+    MapPresenter() {
+        FilterBarHandler filterBarHandler = new FilterBarHandler(this, filterBar);
+
+        AvailableFiltersDto filtersDto = createMockAvailableFiltersDto();
+        filterBarHandler.addQuickFilters(filtersDto.quickFiltersAsFilterModels());
+    }
 
     public void attach(@NonNull MapView view) {
-        view.showFilterBar(createFilterBar());
+        this.view = view;
+        refreshFilterBar();
     }
 
-    @NonNull
-    private FilterBar createFilterBar() {
-        return new FilterBar(createQuickFilters());
-    }
-
-    @NonNull
-    private List<Filter> createQuickFilters() {
-        return filtersDto.quickFiltersAsFilterModels();
+    public void refreshFilterBar() {
+        view.refreshFilterBar(filterBar);
     }
 
     private static AvailableFiltersDto createMockAvailableFiltersDto() {

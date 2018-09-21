@@ -3,12 +3,14 @@ package com.mdelbel.android.filtertest.ui.model;
 import android.support.annotation.CheckResult;
 import android.support.annotation.NonNull;
 
-import com.mdelbel.android.filtertest.ui.view.FilterBarSlotViewHolder;
+import com.mdelbel.android.filtertest.ui.view.FilterBarViewHolder;
 
-public class Filter {
+import java.util.Observable;
 
-    private String name;
-    private String tag;
+public class Filter extends Observable {
+
+    private final String name;
+    private final String tag;
     private boolean isActive;
 
     public Filter(@NonNull String name, @NonNull String tag) {
@@ -17,17 +19,27 @@ public class Filter {
         this.isActive = false;
     }
 
-    public void bind(@NonNull FilterBarSlotViewHolder holder) {
+    Filter(@NonNull Filter filter) {
+        this(filter.name, filter.tag);
+    }
+
+    public void bind(@NonNull FilterBarViewHolder holder) {
         holder.name(name).addPayload(this).setActive(isActive);
     }
 
     @CheckResult
-    public boolean areItemsTheSame(@NonNull Filter other) {
-        return this.equals(other);
+    public boolean isActive() {
+        return isActive;
     }
 
     @CheckResult
-    public boolean areContentsTheSame(Filter other) {
-        return tag.equals(other.tag);
+    public boolean isInactive() {
+        return !isActive;
+    }
+
+    public void changeStatus() {
+        isActive = !isActive;
+        setChanged();
+        notifyObservers();
     }
 }

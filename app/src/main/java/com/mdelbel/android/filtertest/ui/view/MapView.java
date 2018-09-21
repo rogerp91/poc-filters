@@ -13,7 +13,7 @@ import com.mdelbel.android.filtertest.ui.model.FilterBar;
 
 public class MapView extends ConstraintLayout {
 
-    private FilterBarAdapter filterBarAdapter;
+    private FilterBarAdapter filterBarAdapter = new FilterBarAdapter();
 
     public MapView(final Context context) {
         this(context, null);
@@ -29,18 +29,15 @@ public class MapView extends ConstraintLayout {
         setUpFilterBar(mapView);
     }
 
-    protected void setUpFilterBar(@NonNull View mapView) {
+    private void setUpFilterBar(@NonNull View mapView) {
         RecyclerView filterBar = mapView.findViewById(R.id.map_view_filter_bar);
-        filterBar.setHasFixedSize(true);
-        RecyclerView.LayoutManager layoutManager
-                = new LinearLayoutManager(this.getContext(), LinearLayoutManager.HORIZONTAL, false);
-        filterBar.setLayoutManager(layoutManager);
 
-        filterBarAdapter = new FilterBarAdapter();
+        filterBar.setHasFixedSize(true);
+        filterBar.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
         filterBar.setAdapter(filterBarAdapter);
     }
 
-    public void showFilterBar(@NonNull FilterBar bar) {
-        filterBarAdapter.update(bar);
+    public void showFilterBar(@NonNull FilterBar filterBar) {
+        filterBarAdapter.submitList(filterBar.asFiltersCollection());
     }
 }

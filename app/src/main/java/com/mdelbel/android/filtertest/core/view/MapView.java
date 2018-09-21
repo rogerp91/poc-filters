@@ -6,5 +6,5 @@ import com.mdelbel.android.filtertest.ui.model.FilterBar;
 
 public interface MapView {
 
-    void showFilterBar(@NonNull FilterBar bar);
+    void refreshFilterBar(@NonNull FilterBar bar);
 }
