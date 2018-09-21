@@ -34,8 +34,7 @@ public class FilterBarAdapter extends ListAdapter<Filter, FilterBarViewHolder> {
             @Override
             public void onClick(View v) {
                 if (holder.getPayload() != null) {
-                    holder.getPayload().changeStatus();
-                    notifyDataSetChanged();
+                    holder.getPayload().toggleStatus();
                 }
             }
         });

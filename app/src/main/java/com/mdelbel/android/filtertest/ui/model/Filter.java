@@ -1,17 +1,19 @@
 package com.mdelbel.android.filtertest.ui.model;
 
+import android.arch.lifecycle.LiveData;
+import android.arch.lifecycle.MutableLiveData;
 import android.support.annotation.CheckResult;
 import android.support.annotation.NonNull;
 
 import com.mdelbel.android.filtertest.ui.view.FilterBarViewHolder;
 
-import java.util.Observable;
-
-public class Filter extends Observable {
+public class Filter {
 
     private final String name;
     private final String tag;
     private boolean isActive;
+
+    private MutableLiveData<Filter> observable = new MutableLiveData<>();
 
     public Filter(@NonNull String name, @NonNull String tag) {
         this.name = name;
@@ -27,9 +29,9 @@ public class Filter extends Observable {
         holder.name(name).addPayload(this).setActive(isActive);
     }
 
-    @CheckResult
-    public boolean isActive() {
-        return isActive;
+    @NonNull
+    public LiveData<Filter> observable() {
+        return observable;
     }
 
     @CheckResult
@@ -37,9 +39,8 @@ public class Filter extends Observable {
         return !isActive;
     }
 
-    public void changeStatus() {
+    public void toggleStatus() {
         isActive = !isActive;
-        setChanged();
-        notifyObservers();
+        observable.setValue(this);
     }
 }
