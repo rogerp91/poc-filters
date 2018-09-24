@@ -1,44 +1,37 @@
 package com.mdelbel.android.filtertest.ui.model;
 
-import android.arch.lifecycle.Observer;
 import android.support.annotation.NonNull;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Observable;
 
-public class FilterBar {
+public class FilterBar extends Observable {
 
-    private final List<Filter> activeFilters = new ArrayList<>();
-    private Observer<Filter> observer;
+    private final List<Filter> filters;
 
-    public void add(@NonNull List<Filter> filters) {
-        for (Filter filter : filters) {
-            Filter copy = new Filter(filter);
-            copy.observable().observeForever(observer);
-            activeFilters.add(copy);
-        }
+    public FilterBar(@NonNull List<Filter> availableFilters) {
+        filters = Collections.unmodifiableList(availableFilters);
     }
 
-    public void remove(@NonNull Filter filter) {
-        filter.observable().removeObserver(observer);
-        activeFilters.remove(filter);
-    }
+    public void notifySlotChanges(@NonNull Filter filterChanged) {
+        FilterBarSlotChange slotChange = new FilterBarSlotChange(filterChanged, filterChanged.updateStatus());
 
-    public void addObserver(@NonNull Observer<Filter> observer) {
-        this.observer = observer;
+        setChanged();
+        notifyObservers(slotChange);
     }
 
     @NonNull
     public List<Filter> asFiltersCollection() {
-        List<Filter> filters = new ArrayList<>(activeFilters);
-        Collections.sort(filters, new Comparator<Filter>() {
+        List<Filter> sortedFilters = new ArrayList<>(filters);
+        Collections.sort(sortedFilters, new Comparator<Filter>() {
             @Override
             public int compare(Filter firstFilter, Filter secondFilter) {
                 return firstFilter.isInactive() ? secondFilter.isInactive() ? 0 : 1 : -1;
             }
         });
-        return Collections.unmodifiableList(filters);
+        return Collections.unmodifiableList(sortedFilters);
     }
 }

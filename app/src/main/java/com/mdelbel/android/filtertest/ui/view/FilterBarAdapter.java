@@ -9,11 +9,19 @@ import android.view.ViewGroup;
 
 import com.mdelbel.android.filtertest.R;
 import com.mdelbel.android.filtertest.ui.model.Filter;
+import com.mdelbel.android.filtertest.ui.model.FilterBar;
 
 public class FilterBarAdapter extends ListAdapter<Filter, FilterBarViewHolder> {
 
+    private FilterBar filterBar;
+
     FilterBarAdapter() {
         super(new FilterDiffCallback());
+    }
+
+    public void setFilterBar(@NonNull FilterBar filterBar) {
+        this.filterBar = filterBar;
+        submitList(filterBar.asFiltersCollection());
     }
 
     @NonNull
@@ -34,7 +42,7 @@ public class FilterBarAdapter extends ListAdapter<Filter, FilterBarViewHolder> {
             @Override
             public void onClick(View v) {
                 if (holder.getPayload() != null) {
-                    holder.getPayload().toggleStatus();
+                    filterBar.notifySlotChanges(holder.getPayload());
                 }
             }
         });
@@ -49,7 +57,7 @@ public class FilterBarAdapter extends ListAdapter<Filter, FilterBarViewHolder> {
 
         @Override
         public boolean areContentsTheSame(Filter oldItem, Filter newItem) {
-            return false;
+            return false; //TODO
         }
     }
 }

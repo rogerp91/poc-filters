@@ -1,7 +1,5 @@
 package com.mdelbel.android.filtertest.ui.model;
 
-import android.arch.lifecycle.LiveData;
-import android.arch.lifecycle.MutableLiveData;
 import android.support.annotation.CheckResult;
 import android.support.annotation.NonNull;
 
@@ -11,27 +9,20 @@ public class Filter {
 
     private final String name;
     private final String tag;
-    private boolean isActive;
+    private final boolean isActive;
 
-    private MutableLiveData<Filter> observable = new MutableLiveData<>();
-
-    public Filter(@NonNull String name, @NonNull String tag) {
+    private Filter(@NonNull String name, @NonNull String tag, boolean isActive) {
         this.name = name;
         this.tag = tag;
-        this.isActive = false;
+        this.isActive = isActive;
     }
 
-    Filter(@NonNull Filter filter) {
-        this(filter.name, filter.tag);
+    public Filter(@NonNull String name, @NonNull String tag) {
+        this(name, tag, false);
     }
 
     public void bind(@NonNull FilterBarViewHolder holder) {
         holder.name(name).addPayload(this).setActive(isActive);
-    }
-
-    @NonNull
-    public LiveData<Filter> observable() {
-        return observable;
     }
 
     @CheckResult
@@ -39,8 +30,8 @@ public class Filter {
         return !isActive;
     }
 
-    public void toggleStatus() {
-        isActive = !isActive;
-        observable.setValue(this);
+    @NonNull
+    public Filter updateStatus() {
+        return new Filter(name, tag, !isActive);
     }
 }

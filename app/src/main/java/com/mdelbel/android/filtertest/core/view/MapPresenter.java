@@ -1,41 +1,52 @@
 package com.mdelbel.android.filtertest.core.view;
 
-import android.arch.lifecycle.Observer;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 
 import com.mdelbel.android.filtertest.core.dto.AvailableFiltersDto;
 import com.mdelbel.android.filtertest.core.dto.FilterDto;
 import com.mdelbel.android.filtertest.ui.model.Filter;
 import com.mdelbel.android.filtertest.ui.model.FilterBar;
+import com.mdelbel.android.filtertest.ui.model.FilterBarSlotChange;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Observable;
+import java.util.Observer;
 
 public class MapPresenter {
 
-    private final FilterBar filterBar;
+    private FilterBar filterBar;
+    private List<Filter> showingFilters = new ArrayList<>();
+    private Observer filterBarObserver = new Observer() {
+        @Override
+        public void update(Observable bar, Object slotChange) {
+            FilterBarSlotChange filterBarSlotChange = (FilterBarSlotChange) slotChange;
+            if (filterBarSlotChange.hasChangeStatusToInactive()) {
+                showingFilters.remove(filterBarSlotChange.oldValue());
+            } else {
+                showingFilters.set(showingFilters.indexOf(filterBarSlotChange.oldValue()), filterBarSlotChange.newValue());
+            }
+
+            filterBar.deleteObserver(filterBarObserver);
+            filterBar = new FilterBar(showingFilters);
+            filterBar.addObserver(filterBarObserver);
+
+            refreshFilterBar();
+        }
+    };
 
     private MapView view;
 
     MapPresenter() {
         AvailableFiltersDto filtersDto = createMockAvailableFiltersDto();
+        showingFilters.addAll(filtersDto.quickFiltersAsFilterModels());
 
-        filterBar = new FilterBar();
-        filterBar.addObserver(new Observer<Filter>() {
-            @Override
-            public void onChanged(@Nullable Filter filter) {
-                if (filter.isInactive()) {
-                    filterBar.remove(filter);
-                }
-                refreshFilterBar();
-            }
-        });
-        filterBar.add(filtersDto.quickFiltersAsFilterModels());
+        filterBar = new FilterBar(showingFilters);
+        filterBar.addObserver(filterBarObserver);
     }
 
-    public void attach(@NonNull MapView view) {
-        this.view = view;
+    public void attach(@NonNull MapView mapView) {
+        this.view = mapView;
         refreshFilterBar();
     }
 

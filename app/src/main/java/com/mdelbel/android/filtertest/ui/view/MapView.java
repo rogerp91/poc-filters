@@ -38,6 +38,6 @@ public class MapView extends ConstraintLayout {
     }
 
     public void showFilterBar(@NonNull FilterBar filterBar) {
-        filterBarAdapter.submitList(filterBar.asFiltersCollection());
+        filterBarAdapter.setFilterBar(filterBar);
     }
 }
