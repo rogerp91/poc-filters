@@ -25,7 +25,7 @@ public class MapPresenter {
             FilterBarSlotChange filterBarSlotChange = (FilterBarSlotChange) slotChange;
             if (filterBarSlotChange.hasChangeStatusToInactive()) {
                 showingFilters.remove(filterBarSlotChange.oldValue());
-            } else {
+            } else if (showingFilters.contains(filterBarSlotChange.oldValue())) {
                 showingFilters.set(showingFilters.indexOf(filterBarSlotChange.oldValue()), filterBarSlotChange.newValue());
             }
 
