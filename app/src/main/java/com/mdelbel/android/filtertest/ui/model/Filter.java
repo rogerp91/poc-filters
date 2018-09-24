@@ -30,6 +30,11 @@ public class Filter {
         return !isActive;
     }
 
+    @CheckResult
+    public boolean hasSameContent(@NonNull Filter otherFilter) {
+        return name.equals(otherFilter.name) && tag.equals(otherFilter.tag) && isActive == otherFilter.isActive;
+    }
+
     @NonNull
     public Filter updateStatus() {
         return new Filter(name, tag, !isActive);

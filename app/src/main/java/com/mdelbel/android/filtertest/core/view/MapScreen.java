@@ -28,6 +28,12 @@ public class MapScreen extends AppCompatActivity implements MapView {
     }
 
     @Override
+    protected void onPause() {
+        presenter.deAttach();
+        super.onPause();
+    }
+
+    @Override
     public void refreshFilterBar(@NonNull FilterBar bar) {
         map.showFilterBar(bar);
     }

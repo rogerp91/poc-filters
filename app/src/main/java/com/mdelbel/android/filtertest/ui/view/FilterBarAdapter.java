@@ -57,7 +57,7 @@ public class FilterBarAdapter extends ListAdapter<Filter, FilterBarViewHolder> {
 
         @Override
         public boolean areContentsTheSame(Filter oldItem, Filter newItem) {
-            return false; //TODO
+            return oldItem.hasSameContent(newItem);
         }
     }
 }

@@ -17,6 +17,8 @@ public class MapPresenter {
 
     private FilterBar filterBar;
     private List<Filter> showingFilters = new ArrayList<>();
+    private MapView view;
+
     private Observer filterBarObserver = new Observer() {
         @Override
         public void update(Observable bar, Object slotChange) {
@@ -29,20 +31,15 @@ public class MapPresenter {
 
             filterBar.deleteObserver(filterBarObserver);
             filterBar = new FilterBar(showingFilters);
-            filterBar.addObserver(filterBarObserver);
-
             refreshFilterBar();
         }
     };
-
-    private MapView view;
 
     MapPresenter() {
         AvailableFiltersDto filtersDto = createMockAvailableFiltersDto();
         showingFilters.addAll(filtersDto.quickFiltersAsFilterModels());
 
         filterBar = new FilterBar(showingFilters);
-        filterBar.addObserver(filterBarObserver);
     }
 
     public void attach(@NonNull MapView mapView) {
@@ -50,7 +47,12 @@ public class MapPresenter {
         refreshFilterBar();
     }
 
+    public void deAttach() {
+        filterBar.deleteObserver(filterBarObserver);
+    }
+
     private void refreshFilterBar() {
+        filterBar.addObserver(filterBarObserver);
         view.refreshFilterBar(filterBar);
     }
 
